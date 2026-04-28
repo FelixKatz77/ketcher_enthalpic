@@ -37,7 +37,7 @@ interface MultiToolCallProps {
   onAction: (action: UiActionAction) => void;
 }
 
-type MultiToolVariant = 'default' | 'grouped';
+type MultiToolVariant = 'default' | 'grouped' | 'reaction-mapping';
 
 export type {
   GroupDescriptor,

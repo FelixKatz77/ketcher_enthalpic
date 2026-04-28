@@ -5,8 +5,12 @@ export const UNRESOLVED_MONOMER_COLOR = '#585858';
 export const BAD_VALENCE_WARNING_COLOR = '#F00';
 export const BAD_VALENCE_LINE_OFFSET = 2;
 
-export const SELECTION_COLOR = '#57FF8F';
-export const SELECTION_HOVERED_COLOR = '#CCFFDD';
+export const SELECTION_COLOR = '#3b82f6';
+export const SELECTION_HOVERED_COLOR = '#bfdbfe';
+
+export const BOND_MADE_COLOR = '#97cda8';
+export const BOND_BROKEN_COLOR = '#e6a8a6';
+export const BOND_MADE_THICKNESS_MULTIPLIER = 2;
 
 export const MONOMER_SYMBOLS_IDS = {
   [KetMonomerClass.AminoAcid]: {

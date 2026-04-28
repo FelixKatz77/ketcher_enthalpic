@@ -35,6 +35,10 @@ import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
 import Visel from './visel';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import {
+  BOND_MADE_COLOR,
+  BOND_MADE_THICKNESS_MULTIPLIER,
+} from '../renderers/constants';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -375,8 +379,33 @@ class ReBond extends ReObject {
     setDoubleBondShift(this, struct);
     if (!hb1 || !hb2) return;
     const isSnapping = restruct.isSnappingBond(bid);
+
+    // Determine whether this bond is currently marked as "Bond made"
+    // (green highlight). Such bonds are rendered bolder and skip the
+    // MADE_OR_BROKEN crossing symbol so they read differently from broken bonds.
+    const highlights = restruct.molecule.highlights;
+    let isHighlighted = false;
+    let highlightColor = '';
+    highlights.forEach((highlight) => {
+      const hasCurrentHighlight = highlight.bonds?.includes(bid);
+      isHighlighted = isHighlighted || hasCurrentHighlight;
+      if (hasCurrentHighlight) {
+        highlightColor = highlight.color;
+      }
+    });
+    const isMadeBond = highlightColor === BOND_MADE_COLOR;
+
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
     this.rbb = util.relBox(this.path.getBBox());
+    if (isMadeBond) {
+      const baseStrokeWidth =
+        options.lineattr?.['stroke-width'] ?? options.bondThicknessInPx;
+      if (baseStrokeWidth) {
+        this.path.attr({
+          'stroke-width': baseStrokeWidth * BOND_MADE_THICKNESS_MULTIPLIER,
+        });
+      }
+    }
     // add layer for bond's skeleton:
     restruct.addReObjectPath(
       LayerMap.bondSkeleton,
@@ -386,7 +415,9 @@ class ReBond extends ReObject {
       true,
     );
     const reactingCenter: any = {};
-    reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
+    reactingCenter.path = isMadeBond
+      ? null
+      : getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {
       reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
       restruct.addReObjectPath(
@@ -466,19 +497,7 @@ class ReBond extends ReObject {
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
     }
 
-    // Checking whether bond is highlighted and what is the last color
-    const highlights = restruct.molecule.highlights;
-    let isHighlighted = false;
-    let highlightColor = '';
-    highlights.forEach((highlight) => {
-      const hasCurrentHighlight = highlight.bonds?.includes(bid);
-      isHighlighted = isHighlighted || hasCurrentHighlight;
-      if (hasCurrentHighlight) {
-        highlightColor = highlight.color;
-      }
-    });
-
-    // Drawing highlight
+    // Drawing highlight (detection was performed earlier)
     if (isHighlighted) {
       const style = {
         fill: highlightColor,

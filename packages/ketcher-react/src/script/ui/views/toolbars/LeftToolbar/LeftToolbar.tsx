@@ -36,6 +36,7 @@ import {
 
 import { ArrowScroll } from '../ArrowScroll';
 import { Bond } from './Bond';
+import { ReactionMapping } from './ReactionMapping';
 import { RGroup } from './RGroup';
 import { Shape } from './Shape';
 import classes from './LeftToolbar.module.less';
@@ -83,6 +84,8 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
         switch (item.id) {
           case 'bond-common':
             return <Bond {...rest} height={height} key={item.id} />;
+          case 'reaction-mapping-tools':
+            return <ReactionMapping {...rest} key={item.id} />;
           case 'rgroup':
             return <RGroup {...rest} key={item.id} />;
           case 'shapes':

@@ -150,6 +150,21 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     }
   };
 
+  const toggleAtomProperty = (
+    key: AtomAllAttributeName,
+    value: AtomAllAttributeValue,
+    resetValue: AtomAllAttributeValue,
+  ) => {
+    const next = getPropertyValue(key) === value ? resetValue : value;
+    updateAtomProperty(key, next);
+  };
+
+  const currentCharge = getPropertyValue('charge');
+  const currentRadical = getPropertyValue('radical');
+  const isChargePlus1 = currentCharge === 1;
+  const isChargeMinus1 = currentCharge === -1;
+  const isMonoradical = currentRadical === Atom.PATTERN.RADICAL.DOUPLET;
+
   const onlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
   const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
@@ -252,6 +267,36 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>{editMenuItemTitle}</span>
+      </Item>
+      <Item
+        {...props}
+        data-testid="Charge +1-option"
+        onClick={() => toggleAtomProperty('charge', 1, null)}
+        className={clsx({ [styles.selectedItem]: isChargePlus1 })}
+      >
+        <span className={styles.contextMenuText}>Charge +1</span>
+      </Item>
+      <Item
+        {...props}
+        data-testid="Charge -1-option"
+        onClick={() => toggleAtomProperty('charge', -1, null)}
+        className={clsx({ [styles.selectedItem]: isChargeMinus1 })}
+      >
+        <span className={styles.contextMenuText}>Charge -1</span>
+      </Item>
+      <Item
+        {...props}
+        data-testid="Monoradical-option"
+        onClick={() =>
+          toggleAtomProperty(
+            'radical',
+            Atom.PATTERN.RADICAL.DOUPLET,
+            Atom.PATTERN.RADICAL.NONE,
+          )
+        }
+        className={clsx({ [styles.selectedItem]: isMonoradical })}
+      >
+        <span className={styles.contextMenuText}>Monoradical</span>
       </Item>
       <Item
         {...props}

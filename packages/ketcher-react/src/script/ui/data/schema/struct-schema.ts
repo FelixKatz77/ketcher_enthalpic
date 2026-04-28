@@ -233,6 +233,13 @@ export const atom: StructSchema<AtomProperties> = {
       type: 'boolean',
       default: false,
     },
+    aam: {
+      title: 'Reaction mapping',
+      type: 'integer',
+      minimum: 0,
+      default: 0,
+      invalidMessage: 'Mapping must be a non-negative integer',
+    },
   },
 };
 

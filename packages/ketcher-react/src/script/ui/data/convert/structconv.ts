@@ -225,6 +225,7 @@ export function fromAtom(satom?: Atom) {
     radical: satom.radical,
     invRet: satom.invRet,
     exactChangeFlag: !!satom.exactChangeFlag,
+    aam: satom.aam || 0,
     ringBondCount: satom.ringBondCount,
     substitutionCount: satom.substitutionCount,
     unsaturatedAtom: !!satom.unsaturatedAtom,

@@ -177,4 +177,11 @@
 
 .reactionFlags {
   padding-bottom: 20px;
+
+  // Separate the "Reaction mapping" field from the "Exact change" checkbox
+  // immediately above it; the checkbox has its own top margin via .checkbox,
+  // but the aam field below would otherwise sit flush against it.
+  label[data-testid='aam'] {
+    margin-top: 12px;
+  }
 }

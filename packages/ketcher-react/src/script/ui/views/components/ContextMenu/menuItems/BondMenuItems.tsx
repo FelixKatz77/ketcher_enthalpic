@@ -1,9 +1,14 @@
 import { FC, useEffect, useState } from 'react';
 import { Item, Submenu, Separator } from 'react-contexify';
+import clsx from 'clsx';
 import Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
+import useBondMarkReaction, {
+  BOND_BROKEN_COLOR,
+  BOND_MADE_COLOR,
+} from '../hooks/useBondMarkReaction';
 import useBondSGroupAttach from '../hooks/useBondSGroupAttach';
 import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
@@ -18,7 +23,7 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import { ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
+import { Bond, ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -31,7 +36,11 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     stereo: number;
   } | null>(null);
   const [isBondBetweenMonomers, setIsBondBetweenMonomers] = useState(false);
+  const [isBondMade, setIsBondMade] = useState(false);
+  const [isBondBroken, setIsBondBroken] = useState(false);
   const [handleEdit] = useBondEdit();
+  const handleBondMade = useBondMarkReaction(BOND_MADE_COLOR);
+  const handleBondBroken = useBondMarkReaction(BOND_BROKEN_COLOR);
   const [handleTypeChange, disabled] = useBondTypeChange();
   const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
@@ -49,12 +58,13 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
 
     if (bondIds.length > 0 && editor) {
-      const bond = editor.render.ctab.molecule.bonds.get(bondIds[0]);
+      const struct = editor.render.ctab.molecule;
+      const bondId = bondIds[0];
+      const bond = struct.bonds.get(bondId);
       if (bond) {
         setBondData({ type: bond.type, stereo: bond.stereo });
 
         // Check if bond is between two monomers
-        const struct = editor.render.ctab.molecule;
         const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
         const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
         const isBetweenMonomers =
@@ -62,9 +72,24 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           endAtomSgroup instanceof MonomerMicromolecule &&
           beginAtomSgroup !== endAtomSgroup;
         setIsBondBetweenMonomers(isBetweenMonomers);
+
+        const markedAsReactingCenter =
+          bond.reactingCenterStatus ===
+          Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN;
+        let hasMadeHighlight = false;
+        let hasBrokenHighlight = false;
+        struct.highlights.forEach((highlight) => {
+          if (!highlight.bonds?.includes(bondId)) return;
+          if (highlight.color === BOND_MADE_COLOR) hasMadeHighlight = true;
+          if (highlight.color === BOND_BROKEN_COLOR) hasBrokenHighlight = true;
+        });
+        setIsBondMade(markedAsReactingCenter && hasMadeHighlight);
+        setIsBondBroken(markedAsReactingCenter && hasBrokenHighlight);
       } else {
         setBondData(null);
         setIsBondBetweenMonomers(false);
+        setIsBondMade(false);
+        setIsBondBroken(false);
       }
     }
   }, [props.propsFromTrigger, ketcherId]);
@@ -106,6 +131,24 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             ? 'Edit selected bonds...'
             : 'Edit...'}
         </span>
+      </Item>
+      <Item
+        {...props}
+        data-testid="Bond made-option"
+        onClick={handleBondMade}
+        disabled={isDisabled}
+        className={clsx({ [styles.selectedItem]: isBondMade })}
+      >
+        <span className={styles.contextMenuText}>Bond made</span>
+      </Item>
+      <Item
+        {...props}
+        data-testid="Bond broken-option"
+        onClick={handleBondBroken}
+        disabled={isDisabled}
+        className={clsx({ [styles.selectedItem]: isBondBroken })}
+      >
+        <span className={styles.contextMenuText}>Bond broken</span>
       </Item>
       <Separator />
       {bondNamesWithoutEmptyValue.map((name) => {

@@ -32,6 +32,17 @@ export function updateSelectedAtoms({
   if (atoms) {
     Promise.resolve(changeAtomPromise)
       .then((userChangedAtom) => {
+        // Pair-renumber for AAM: only meaningful for single-atom edits.
+        const isSingleAtomEdit = atoms.length === 1;
+        const editedAtomId = isSingleAtomEdit ? atoms[0] : null;
+        const editedAtom =
+          editedAtomId !== null ? molecule.atoms.get(editedAtomId) : null;
+        const oldAam = editedAtom?.aam ?? 0;
+        const newAam =
+          userChangedAtom && 'aam' in userChangedAtom
+            ? Number((userChangedAtom as { aam?: unknown }).aam) || 0
+            : oldAam;
+
         // TODO: deep compare to not produce dummy, e.g.
         // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
         atoms.forEach((atomId) => {
@@ -44,6 +55,22 @@ export function updateSelectedAtoms({
             fromAtomsAttrs(struct, atomId, atomWithChangedProperties, false),
           );
         });
+
+        if (
+          isSingleAtomEdit &&
+          oldAam > 0 &&
+          newAam !== oldAam &&
+          editedAtomId !== null
+        ) {
+          molecule.atoms.forEach((otherAtom, otherId) => {
+            if (otherId !== editedAtomId && otherAtom.aam === oldAam) {
+              action.mergeWith(
+                fromAtomsAttrs(struct, otherId, { aam: newAam }, false),
+              );
+            }
+          });
+        }
+
         editor.update(action);
       })
       .catch((e) => {

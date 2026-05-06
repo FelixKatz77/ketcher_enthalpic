@@ -36,6 +36,7 @@ import { isNumber } from 'lodash';
 import Visel from './visel';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import {
+  BOND_BROKEN_COLOR,
   BOND_MADE_COLOR,
   BOND_MADE_THICKNESS_MULTIPLIER,
 } from '../renderers/constants';
@@ -380,9 +381,10 @@ class ReBond extends ReObject {
     if (!hb1 || !hb2) return;
     const isSnapping = restruct.isSnappingBond(bid);
 
-    // Determine whether this bond is currently marked as "Bond made"
-    // (green highlight). Such bonds are rendered bolder and skip the
-    // MADE_OR_BROKEN crossing symbol so they read differently from broken bonds.
+    // "Bond made" bonds (reactionRole === 'made') are rendered bolder and skip
+    // the MADE_OR_BROKEN dashed mark so they read differently from broken bonds.
+    // The colored highlight (green for made, red for broken) is still drawn
+    // separately below from molecule.highlights.
     const highlights = restruct.molecule.highlights;
     let isHighlighted = false;
     let highlightColor = '';
@@ -393,7 +395,7 @@ class ReBond extends ReObject {
         highlightColor = highlight.color;
       }
     });
-    const isMadeBond = highlightColor === BOND_MADE_COLOR;
+    const isMadeBond = this.b.reactionRole === 'made';
 
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
     this.rbb = util.relBox(this.path.getBBox());
@@ -506,6 +508,25 @@ class ReBond extends ReObject {
 
       const ret = this.makeHighlitePlate(restruct, style);
       render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+    }
+
+    // reactionRole drives its own colored plate independently of the generic
+    // highlight system, so Made/Broken survive without a paired highlight
+    // (e.g. after import from V3000 ENTHALPIC_RC).
+    const reactionRoleColor =
+      this.b.reactionRole === 'made'
+        ? BOND_MADE_COLOR
+        : this.b.reactionRole === 'broken'
+        ? BOND_BROKEN_COLOR
+        : null;
+    if (reactionRoleColor) {
+      const ret = this.makeHighlitePlate(restruct, {
+        fill: reactionRoleColor,
+        stroke: 'none',
+      });
+      if (ret) {
+        render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+      }
     }
 
     if (bond.cip) {

@@ -4,10 +4,10 @@ import Editor from 'src/script/editor';
 import {
   Action,
   Bond,
+  BondReactionRole,
   BOND_BROKEN_COLOR,
   BOND_MADE_COLOR,
   fromBondsAttrs,
-  fromHighlightDelete,
   KetcherLogger,
   ketcherProvider,
 } from 'ketcher-core';
@@ -17,7 +17,10 @@ type Params = ItemEventParams<BondsContextMenuProps>;
 
 export { BOND_MADE_COLOR, BOND_BROKEN_COLOR };
 
-const TOGGLEABLE_COLORS = new Set([BOND_MADE_COLOR, BOND_BROKEN_COLOR]);
+const ROLE_BY_COLOR: Record<string, Exclude<BondReactionRole, null>> = {
+  [BOND_MADE_COLOR]: 'made',
+  [BOND_BROKEN_COLOR]: 'broken',
+};
 
 const useBondMarkReaction = (color: string) => {
   const { ketcherId } = useAppContext();
@@ -28,78 +31,40 @@ const useBondMarkReaction = (color: string) => {
       const bondIds = props?.bondIds ?? [];
       const restruct = editor.render.ctab;
       const { molecule } = restruct;
+      const targetRole = ROLE_BY_COLOR[color];
+      if (!targetRole) return;
 
       try {
         const action = new Action();
-        const bondsToApply: number[] = [];
 
         bondIds.forEach((bondId) => {
           const bond = molecule.bonds.get(bondId);
           if (!bond) return;
 
-          const existingHighlights: Array<{ id: number; color: string }> = [];
-          molecule.highlights.forEach((highlight, id) => {
-            if (highlight.bonds?.includes(bondId)) {
-              existingHighlights.push({ id, color: highlight.color });
-            }
-          });
+          const isCurrentlyMarked = bond.reactionRole === targetRole;
 
-          const hasTargetColor = existingHighlights.some(
-            (h) => h.color === color,
+          const nextAttrs = isCurrentlyMarked
+            ? {
+                reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED,
+                reactionRole: null,
+              }
+            : {
+                reactingCenterStatus:
+                  Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN,
+                reactionRole: targetRole,
+              };
+
+          action.mergeWith(
+            fromBondsAttrs(
+              restruct,
+              bondId,
+              { ...bond, ...nextAttrs } as Bond,
+              false,
+            ),
           );
-          const isCurrentlyMarked =
-            bond.reactingCenterStatus ===
-              Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN && hasTargetColor;
-
-          if (isCurrentlyMarked) {
-            action.mergeWith(
-              fromBondsAttrs(
-                restruct,
-                bondId,
-                {
-                  ...bond,
-                  reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED,
-                } as Bond,
-                false,
-              ),
-            );
-            existingHighlights
-              .filter((h) => h.color === color)
-              .forEach(({ id }) => {
-                action.mergeWith(fromHighlightDelete(restruct, id));
-              });
-          } else {
-            action.mergeWith(
-              fromBondsAttrs(
-                restruct,
-                bondId,
-                {
-                  ...bond,
-                  reactingCenterStatus:
-                    Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN,
-                } as Bond,
-                false,
-              ),
-            );
-            existingHighlights
-              .filter((h) => TOGGLEABLE_COLORS.has(h.color))
-              .forEach(({ id }) => {
-                action.mergeWith(fromHighlightDelete(restruct, id));
-              });
-            bondsToApply.push(bondId);
-          }
         });
 
         editor.update(action);
-
-        if (bondsToApply.length > 0) {
-          editor.highlights.create({
-            atoms: [],
-            bonds: bondsToApply,
-            rgroupAttachmentPoints: [],
-            color,
-          });
-        }
       } catch (e) {
         KetcherLogger.error('useBondMarkReaction.ts::handler', e);
       }

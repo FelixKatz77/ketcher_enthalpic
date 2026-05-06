@@ -26,6 +26,7 @@ import { StructService, StructServiceOptions } from 'domain/services';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';
 import { MolfileV2000Formatter } from './molfileV2000Formatter';
+import { MolfileV3000Formatter } from './molfileV3000Formatter';
 
 export class FormatterFactory {
   readonly #structService: StructService;
@@ -80,6 +81,10 @@ export class FormatterFactory {
         break;
 
       case SupportedFormat.mol:
+      case SupportedFormat.rxn:
+        // V2000 MOL/RXN: local serialization via Molfile.saveMolecule.
+        // Falls back to the server when query properties are present, since
+        // the local writer doesn't synthesize SMARTS-style query attributes.
         if (queryPropertiesAreUsed) {
           formatter = new ServerFormatter(
             this.#structService,
@@ -94,20 +99,36 @@ export class FormatterFactory {
         }
         break;
 
+      case SupportedFormat.molV3000:
+      case SupportedFormat.rxnV3000:
+        // V3000 MOL/RXN: local serialization via the v3000.ts writer added
+        // alongside the existing parser. Persists `bond.reactionRole` as
+        // ENTHALPIC_RC=MADE|BROKEN|MADE_BROKEN.
+        if (queryPropertiesAreUsed) {
+          formatter = new ServerFormatter(
+            this.#structService,
+            new KetSerializer(),
+            format,
+            structServiceOptions,
+          );
+        } else {
+          formatter = new MolfileV3000Formatter(
+            new MolSerializer(molSerializerOptions),
+          );
+        }
+        break;
+
       case SupportedFormat.cml:
       case SupportedFormat.inChIAuxInfo:
       case SupportedFormat.inChI:
       case SupportedFormat.inChIKey:
-      case SupportedFormat.molV3000:
       case SupportedFormat.smiles:
-      case SupportedFormat.rxnV3000:
       case SupportedFormat.smilesExt:
       case SupportedFormat.smarts:
       case SupportedFormat.cdxml:
       case SupportedFormat.cdx:
       case SupportedFormat.binaryCdx:
       case SupportedFormat.unknown:
-      case SupportedFormat.rxn:
       default:
         formatter = new ServerFormatter(
           this.#structService,

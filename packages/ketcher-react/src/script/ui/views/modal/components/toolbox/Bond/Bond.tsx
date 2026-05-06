@@ -32,7 +32,7 @@ import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/Con
 interface BondSettings {
   type: string;
   topology: number | null;
-  center: number | null;
+  center: number | string | null;
   customQuery: string;
 }
 interface BondProps extends BaseProps, BondSettings {}

@@ -23,7 +23,7 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import { Bond, ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
+import { ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -73,18 +73,8 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           beginAtomSgroup !== endAtomSgroup;
         setIsBondBetweenMonomers(isBetweenMonomers);
 
-        const markedAsReactingCenter =
-          bond.reactingCenterStatus ===
-          Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN;
-        let hasMadeHighlight = false;
-        let hasBrokenHighlight = false;
-        struct.highlights.forEach((highlight) => {
-          if (!highlight.bonds?.includes(bondId)) return;
-          if (highlight.color === BOND_MADE_COLOR) hasMadeHighlight = true;
-          if (highlight.color === BOND_BROKEN_COLOR) hasBrokenHighlight = true;
-        });
-        setIsBondMade(markedAsReactingCenter && hasMadeHighlight);
-        setIsBondBroken(markedAsReactingCenter && hasBrokenHighlight);
+        setIsBondMade(bond.reactionRole === 'made');
+        setIsBondBroken(bond.reactionRole === 'broken');
       } else {
         setBondData(null);
         setIsBondBetweenMonomers(false);

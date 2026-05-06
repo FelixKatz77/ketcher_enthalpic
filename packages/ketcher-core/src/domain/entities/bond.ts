@@ -25,8 +25,11 @@ import {
 import { SGroup } from 'domain/entities/sgroup';
 import { BondCIP } from 'domain/entities/types';
 
+export type BondReactionRole = 'made' | 'broken' | 'made_or_broken' | null;
+
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
+  reactionRole?: BondReactionRole;
   topology?: number | null;
   customQuery?: string | null;
   stereo?: number;
@@ -88,6 +91,7 @@ export class Bond extends BaseMicromoleculeEntity {
     stereo: Bond.PATTERN.STEREO.NONE,
     topology: Bond.PATTERN.TOPOLOGY.EITHER,
     reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED,
+    reactionRole: null,
     cip: null,
     customQuery: null,
   };
@@ -99,6 +103,7 @@ export class Bond extends BaseMicromoleculeEntity {
   stereo: number;
   readonly topology: number | null;
   readonly reactingCenterStatus: number | null;
+  readonly reactionRole: BondReactionRole;
   customQuery: string | null;
   len: number;
   sb: number;
@@ -124,6 +129,7 @@ export class Bond extends BaseMicromoleculeEntity {
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
     this.customQuery = null;
     this.reactingCenterStatus = 0;
+    this.reactionRole = attributes.reactionRole ?? null;
     this.cip = attributes.cip ?? null;
     this.len = 0;
     this.sb = 0;

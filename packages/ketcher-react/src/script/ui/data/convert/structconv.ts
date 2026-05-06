@@ -18,6 +18,7 @@ import {
   AtomList,
   Atom,
   Bond,
+  BondReactionRole,
   AttachmentPoints,
   Elements,
   StereoLabel,
@@ -225,6 +226,7 @@ export function fromAtom(satom?: Atom) {
     radical: satom.radical,
     invRet: satom.invRet,
     exactChangeFlag: !!satom.exactChangeFlag,
+    aam: satom.aam || 0,
     ringBondCount: satom.ringBondCount,
     substitutionCount: satom.substitutionCount,
     unsaturatedAtom: !!satom.unsaturatedAtom,
@@ -413,7 +415,10 @@ export function fromBond(sbond?: Bond) {
   return {
     type: isCustomQuery ? '' : fromBondType(type, stereo),
     topology: sbond.topology,
-    center: sbond.reactingCenterStatus,
+    center: (sbond.reactionRole ?? sbond.reactingCenterStatus) as
+      | number
+      | string
+      | null,
     customQuery: !isCustomQuery ? '' : sbond.customQuery!.toString(),
   };
 }
@@ -421,9 +426,17 @@ export function fromBond(sbond?: Bond) {
 export function toBond(bond: ReturnType<typeof fromBond>) {
   if (!bond) return null;
   const isCustomQuery = bond.customQuery !== '';
+  const isExplicitRole = typeof bond.center === 'string';
+  const reactingCenterStatus = isExplicitRole
+    ? Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN
+    : (bond.center as number | null);
+  const reactionRole: BondReactionRole = isExplicitRole
+    ? (bond.center as Exclude<BondReactionRole, null>)
+    : null;
   return {
     topology: bond.topology,
-    reactingCenterStatus: bond.center,
+    reactingCenterStatus,
+    reactionRole,
     customQuery: !isCustomQuery ? null : bond.customQuery,
     ...toBondType(isCustomQuery ? 'any' : bond.type),
   };

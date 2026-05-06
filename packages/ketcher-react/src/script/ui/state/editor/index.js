@@ -92,7 +92,7 @@ export default function initEditor(dispatch, getState) {
         );
         return openDialog(dispatch, 'atomProps', {
           ...atomAttributes,
-          isMultipleAtoms: true,
+          isMultipleAtoms: selem.length > 1,
         }).then(toElement);
       }
       const elem = selem.type === 'text' ? selem : fromElement(selem);

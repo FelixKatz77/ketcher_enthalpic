@@ -52,3 +52,9 @@ export function fromHighlightClear(restruct: ReStruct): Action {
 
   return action.perform(restruct);
 }
+
+export function fromHighlightDelete(restruct: ReStruct, id: number): Action {
+  const action = new Action();
+  action.addOp(new HighlightDelete(id));
+  return action.perform(restruct);
+}

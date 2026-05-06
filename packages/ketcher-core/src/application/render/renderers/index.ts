@@ -12,3 +12,8 @@ export { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
 export { RenderersManager } from './RenderersManager';
 export { getRenderedStructuresBbox } from './utils';
 export * from './sequence';
+export {
+  BOND_MADE_COLOR,
+  BOND_BROKEN_COLOR,
+  BOND_MADE_THICKNESS_MULTIPLIER,
+} from './constants';

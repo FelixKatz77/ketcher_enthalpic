@@ -64,6 +64,7 @@ export const formsState: ModalFormsState = {
       connectivity: null,
       chirality: null,
       customQuery: null,
+      aam: 0,
     },
   },
   attachmentPoints: {

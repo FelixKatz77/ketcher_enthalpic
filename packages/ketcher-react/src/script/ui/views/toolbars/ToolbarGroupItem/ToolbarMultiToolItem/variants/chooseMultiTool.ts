@@ -26,6 +26,7 @@ import {
 
 import { ComponentType } from 'react';
 import { GroupedMultiTool } from './GroupedMultiTool';
+import { ReactionMappingMultiTool } from './ReactionMappingMultiTool';
 
 export function chooseMultiTool(
   variant: MultiToolVariant = 'default',
@@ -39,6 +40,9 @@ export function chooseMultiTool(
 
     case 'grouped':
       return [GroupedMultiTool, 'grouped-multitool-dropdown'];
+
+    case 'reaction-mapping':
+      return [ReactionMappingMultiTool, 'reaction-mapping-multitool-dropdown'];
 
     default:
       throw new Error(`Unsupported variant ${variant}`);

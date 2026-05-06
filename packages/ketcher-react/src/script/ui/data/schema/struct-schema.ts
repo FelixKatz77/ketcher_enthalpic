@@ -33,6 +33,8 @@ export interface SchemaProperty extends CommonStructSchema {
   pattern?: string;
   maxLength?: number;
   minLength?: number;
+  minimum?: number;
+  maximum?: number;
   invalidMessage?: string | ((data: unknown) => string);
 }
 
@@ -233,6 +235,13 @@ export const atom: StructSchema<AtomProperties> = {
       type: 'boolean',
       default: false,
     },
+    aam: {
+      title: 'Reaction mapping',
+      type: 'integer',
+      minimum: 0,
+      default: 0,
+      invalidMessage: 'Mapping must be a non-negative integer',
+    },
   },
 };
 
@@ -337,7 +346,7 @@ export const bond: StructSchema = {
     },
     center: {
       title: 'Reacting Center',
-      enum: [null, 0, -1, 1, 2, 4, 8, 12], // 5, 9, 13
+      enum: [null, 0, -1, 1, 2, 4, 'made', 'broken', 'made_or_broken', 8, 12], // 5, 9, 13
       enumNames: [
         '',
         'Unmarked',
@@ -345,6 +354,9 @@ export const bond: StructSchema = {
         'Center',
         'No change',
         'Made/broken',
+        'Made',
+        'Broken',
+        'Made or broken (explicit)',
         'Order changes',
         'Made/broken and changes',
       ], // "Order changes" x 3

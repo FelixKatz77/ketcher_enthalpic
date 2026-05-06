@@ -35,6 +35,11 @@ import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
 import Visel from './visel';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import {
+  BOND_BROKEN_COLOR,
+  BOND_MADE_COLOR,
+  BOND_MADE_THICKNESS_MULTIPLIER,
+} from '../renderers/constants';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -375,8 +380,34 @@ class ReBond extends ReObject {
     setDoubleBondShift(this, struct);
     if (!hb1 || !hb2) return;
     const isSnapping = restruct.isSnappingBond(bid);
+
+    // "Bond made" bonds (reactionRole === 'made') are rendered bolder and skip
+    // the MADE_OR_BROKEN dashed mark so they read differently from broken bonds.
+    // The colored highlight (green for made, red for broken) is still drawn
+    // separately below from molecule.highlights.
+    const highlights = restruct.molecule.highlights;
+    let isHighlighted = false;
+    let highlightColor = '';
+    highlights.forEach((highlight) => {
+      const hasCurrentHighlight = highlight.bonds?.includes(bid);
+      isHighlighted = isHighlighted || hasCurrentHighlight;
+      if (hasCurrentHighlight) {
+        highlightColor = highlight.color;
+      }
+    });
+    const isMadeBond = this.b.reactionRole === 'made';
+
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
     this.rbb = util.relBox(this.path.getBBox());
+    if (isMadeBond) {
+      const baseStrokeWidth =
+        options.lineattr?.['stroke-width'] ?? options.bondThicknessInPx;
+      if (baseStrokeWidth) {
+        this.path.attr({
+          'stroke-width': baseStrokeWidth * BOND_MADE_THICKNESS_MULTIPLIER,
+        });
+      }
+    }
     // add layer for bond's skeleton:
     restruct.addReObjectPath(
       LayerMap.bondSkeleton,
@@ -386,7 +417,9 @@ class ReBond extends ReObject {
       true,
     );
     const reactingCenter: any = {};
-    reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
+    reactingCenter.path = isMadeBond
+      ? null
+      : getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {
       reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
       restruct.addReObjectPath(
@@ -466,19 +499,7 @@ class ReBond extends ReObject {
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
     }
 
-    // Checking whether bond is highlighted and what is the last color
-    const highlights = restruct.molecule.highlights;
-    let isHighlighted = false;
-    let highlightColor = '';
-    highlights.forEach((highlight) => {
-      const hasCurrentHighlight = highlight.bonds?.includes(bid);
-      isHighlighted = isHighlighted || hasCurrentHighlight;
-      if (hasCurrentHighlight) {
-        highlightColor = highlight.color;
-      }
-    });
-
-    // Drawing highlight
+    // Drawing highlight (detection was performed earlier)
     if (isHighlighted) {
       const style = {
         fill: highlightColor,
@@ -487,6 +508,25 @@ class ReBond extends ReObject {
 
       const ret = this.makeHighlitePlate(restruct, style);
       render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+    }
+
+    // reactionRole drives its own colored plate independently of the generic
+    // highlight system, so Made/Broken survive without a paired highlight
+    // (e.g. after import from V3000 ENTHALPIC_RC).
+    const reactionRoleColor =
+      this.b.reactionRole === 'made'
+        ? BOND_MADE_COLOR
+        : this.b.reactionRole === 'broken'
+        ? BOND_BROKEN_COLOR
+        : null;
+    if (reactionRoleColor) {
+      const ret = this.makeHighlitePlate(restruct, {
+        fill: reactionRoleColor,
+        stroke: 'none',
+      });
+      if (ret) {
+        render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+      }
     }
 
     if (bond.cip) {

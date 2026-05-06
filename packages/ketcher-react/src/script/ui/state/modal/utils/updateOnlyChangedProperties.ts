@@ -2,6 +2,7 @@ function castAtomPropToType(property, value) {
   const typesMapping = {
     exactChangeFlag: Number,
     unsaturatedAtom: Number,
+    aam: Number,
   };
   if (typesMapping[property]) {
     return typesMapping[property](value);

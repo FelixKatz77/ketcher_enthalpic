@@ -220,6 +220,7 @@ const Atom: FC<Props> = (props: Props) => {
             labelPos="before"
             className={classes.checkbox}
           />
+          {!isMultipleAtoms && <Field name="aam" data-testid="aam" />}
         </div>
       ),
     },

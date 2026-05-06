@@ -232,6 +232,24 @@ class Editor implements KetcherEditor {
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
 
+  /**
+   * Override for the next AAM the reaction-map tool will assign on a fresh pair.
+   * `null` means "auto" (current behavior: max(existing aam) + 1).
+   * Reset to `null` after each successful drop.
+   */
+  reactionMapNextNumber: number | null = null;
+  reactionMapNextNumberChanged = new Subscription<number | null>();
+
+  setReactionMapNextNumber(value: number | null) {
+    const normalized =
+      typeof value === 'number' && Number.isFinite(value) && value >= 1
+        ? Math.floor(value)
+        : null;
+    if (this.reactionMapNextNumber === normalized) return;
+    this.reactionMapNextNumber = normalized;
+    this.reactionMapNextNumberChanged.dispatch(normalized);
+  }
+
   constructor(ketcherId, clientArea, options, serverSettings, prevEditor?) {
     this.render = new Render(
       clientArea,

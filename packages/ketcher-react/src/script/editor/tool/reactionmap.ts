@@ -124,21 +124,29 @@ class ReactionMapTool implements Tool {
               fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam1 }, null),
             );
           } else {
-            let aam = 0;
-            atoms.forEach((atom) => {
-              aam = Math.max(aam, atom.aam || 0);
-            });
+            let nextAam: number;
+            const override = this.editor.reactionMapNextNumber;
+            if (override && override >= 1) {
+              nextAam = override;
+            } else {
+              let maxAam = 0;
+              atoms.forEach((atom) => {
+                maxAam = Math.max(maxAam, atom.aam || 0);
+              });
+              nextAam = maxAam + 1;
+            }
             action.mergeWith(
               fromAtomsAttrs(
                 rnd.ctab,
                 this.dragCtx.item.id,
-                { aam: aam + 1 },
+                { aam: nextAam },
                 null,
               ),
             );
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam + 1 }, null),
+              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: nextAam }, null),
             );
+            this.editor.setReactionMapNextNumber(null);
           }
           this.editor.update(action);
         }

@@ -253,6 +253,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     const formats = !this.props.server
       ? [
           SupportedFormat.ket,
+          this.isRxn ? SupportedFormat.rxnV3000 : SupportedFormat.molV3000,
           this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
           SupportedFormat.smiles,
         ]
@@ -510,7 +511,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           schema={this.saveSchema}
           init={{
             filename,
-            format: this.isRxn ? 'rxn' : 'mol',
+            // V3000 is the default save format so the explicit
+            // bond.reactionRole (Made / Broken / Made-or-broken) survives
+            // round-trip via ENTHALPIC_RC. V2000 entries remain selectable
+            // in the dropdown for compatibility with tools that don't read
+            // V3000 — they silently downgrade to RC=4 there.
+            format: this.isRxn ? 'rxnV3000' : 'molV3000',
           }}
           {...formState}
         >

@@ -1,56 +1,30 @@
 export enum ExtendedTableButton {
-  // Atom Generics
-  A = 'A-button',
-  AH = 'AH-button',
-  Q = 'Q-button',
-  QH = 'QH-button',
-  M = 'M-button',
-  MH = 'MH-button',
+  // Acyl
+  Bz = 'Bz-button',
+  Ac = 'Ac-button',
+  // Aliphatic
+  Cy = 'Cy-button',
+  // Alkyl
+  tBu = 'tBu-button',
+  iPr = 'iPr-button',
+  // Aromatic
+  Ph = 'Ph-button',
+  Bn = 'Bn-button',
+  // Generics
+  Alk = 'Alk-button',
+  Ar = 'Ar-button',
+  // Halogene
   X = 'X-button',
-  XH = 'XH-button',
-  // Special Nodes
-  H_PLUS = 'H+-button',
-  D = 'D-button',
-  T = 'T-button',
-  R = 'R-button',
-  Pol = 'Pol-button',
-  STAR = '*-button',
-  // Group Generics
-  G = 'G-button',
-  GH = 'GH-button',
-  G_STAR = 'G*-button',
-  GH_STAR = 'GH*-button',
-  // Acyclic
-  ACY = 'ACY-button',
-  ACH = 'ACH-button',
-  // Acyclic Carbo
-  ABC = 'ABC-button',
-  ABH = 'ABH-button',
-  AYL = 'AYL-button',
-  AYH = 'AYH-button',
-  ALK = 'ALK-button',
-  ALH = 'ALH-button',
-  AEL = 'AEL-button',
-  AEH = 'AEH-button',
-  AHC = 'AHC-button',
-  AHH = 'AHH-button',
-  AOX = 'AOX-button',
-  AOH = 'AOH-button',
-  // Cyclic
-  CYC = 'CYC-button',
-  CYH = 'CYH-button',
-  CXX = 'CXX-button',
-  CXH = 'CXH-button',
-  CBC = 'CBC-button',
-  CBH = 'CBH-button',
-  ARY = 'ARY-button',
-  ARH = 'ARH-button',
-  CAL = 'CAL-button',
-  CAH = 'CAH-button',
-  CEL = 'CEL-button',
-  CEH = 'CEH-button',
-  CHC = 'CHC-button',
-  CHH = 'CHH-button',
-  HAR = 'HAR-button',
-  HAH = 'HAH-button',
+  // Protecting groups
+  Boc = 'Boc-button',
+  Cbz = 'Cbz-button',
+  Fmoc = 'Fmoc-button',
+  // Silyl
+  TMS = 'TMS-button',
+  TBS = 'TBS-button',
+  TIPS = 'TIPS-button',
+  // Sulfonyl
+  Tf = 'Tf-button',
+  Ts = 'Ts-button',
+  Ms = 'Ms-button',
 }

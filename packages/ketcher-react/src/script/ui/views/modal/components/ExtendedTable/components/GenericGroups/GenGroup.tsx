@@ -27,17 +27,7 @@ type GenProps = {
   disabledQueryElements: Array<string> | null;
 };
 
-const getLegendClassname = (title: string) => {
-  const mainTitles = [
-    'Atom Generics',
-    'Special Nodes',
-    'Group Generics',
-    'Acyclic',
-    'Cyclic',
-  ];
-  if (mainTitles.includes(title)) return 'legendMain';
-  return 'legend';
-};
+const getLegendClassname = (_title: string) => 'legendMain';
 
 const GenGroup = ({
   group,

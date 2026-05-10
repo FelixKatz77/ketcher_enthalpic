@@ -17,13 +17,13 @@
 export { default } from './GenericGroups';
 
 export enum groupNames {
-  atomsGen = 'atoms-gen',
-  specialNodes = 'special-nodes',
-  groupGen = 'group-gen',
-  groupAcyclic = 'group-acyclic',
-  acyclicCarbo = 'acyclic-carbo',
-  acyclicHetero = 'acyclic-hetero',
-  groupCyclic = 'group-cyclic',
-  cyclicHetero = 'cyclic-hetero',
-  cyclicCarbo = 'cyclic-carbo',
+  acyl = 'acyl',
+  aliphatic = 'aliphatic',
+  alkyl = 'alkyl',
+  aromatic = 'aromatic',
+  generics = 'generics',
+  halogene = 'halogene',
+  protectingGroups = 'protecting-groups',
+  silyl = 'silyl',
+  sulfonyl = 'sulfonyl',
 }

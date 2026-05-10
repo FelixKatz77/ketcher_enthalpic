@@ -61,13 +61,19 @@ test.describe('Generic nodes', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Generic Alk and Ar adding to atoms of structure', async ({ page }) => {
+  test('Generic Alk, Ar and R adding to atoms of structure', async ({
+    page,
+  }) => {
     await selectExtendedTableElement(page, ExtendedTableButton.Alk);
     await getAtomLocator(page, { atomLabel: 'O' }).first().click({
       force: true,
     });
     await selectExtendedTableElement(page, ExtendedTableButton.Ar);
     await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.R);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
       force: true,
     });
     await takeEditorScreenshot(page);

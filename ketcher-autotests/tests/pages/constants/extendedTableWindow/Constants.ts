@@ -13,6 +13,7 @@ export enum ExtendedTableButton {
   // Generics
   Alk = 'Alk-button',
   Ar = 'Ar-button',
+  R = 'R-button',
   // Halogene
   X = 'X-button',
   // Protecting groups

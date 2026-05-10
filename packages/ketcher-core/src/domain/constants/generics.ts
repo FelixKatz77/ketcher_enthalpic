@@ -82,6 +82,7 @@ export const Generics: GenericsType = {
         items: [
           { label: 'Alk', description: 'Alkyl (generic)' },
           { label: 'Ar', description: 'Aryl (generic)' },
+          { label: 'R', description: 'Any substituent' },
         ],
       },
     ],

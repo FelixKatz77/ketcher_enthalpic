@@ -19,7 +19,7 @@ This repository is a **fork** of `epam/ketcher` (Enthalpic-specific build). EPAM
 
 - **`master`** — pure mirror of `upstream/master`. Never commit directly. Only ever advances via fast-forward from upstream.
 - **`enthalpic`** — integration branch holding shipped Enthalpic code. This is what gets deployed/built. Features merge into here, not into `master`.
-- **`feature/<name>`** — one branch per feature, branched off `master`. Short-lived. Rebased onto `master` whenever upstream is synced.
+- **`feature/<name>`** — one branch per feature, branched off `enthalpic` (the integration branch already contains all current Enthalpic work). Short-lived. Rebased onto `enthalpic` when other features land or upstream is synced.
 
 ### Sync upstream from EPAM
 
@@ -29,24 +29,26 @@ git fetch upstream
 git merge --ff-only upstream/master    # ff-only — fails if master has drifted (which would be a bug)
 git push origin master
 
-# Then rebase active feature branches and enthalpic onto the new master:
-git checkout feature/<name> && git rebase master
-git checkout enthalpic     && git rebase master   # or merge, see "Rebase vs merge" below
+# Then bring enthalpic up to date with master, and rebase active features onto enthalpic:
+git checkout enthalpic      && git rebase master   # or merge, see "Rebase vs merge" below
+git push origin enthalpic
+git checkout feature/<name> && git rebase enthalpic
 ```
 
 ### Develop a new feature
 
 ```bash
-git checkout master
+git checkout enthalpic
+git pull origin enthalpic         # make sure we branch off the latest integration state
 git checkout -b feature/<name>
 # ...work, commit, push to origin...
 git push -u origin feature/<name>
 ```
 
-When done: rebase onto latest `master`, then merge into `enthalpic`:
+When done: rebase onto latest `enthalpic`, then merge with `--no-ff`:
 
 ```bash
-git checkout feature/<name> && git rebase master
+git checkout feature/<name> && git rebase enthalpic
 git checkout enthalpic && git merge --no-ff feature/<name>
 git push origin enthalpic
 ```
@@ -61,7 +63,16 @@ git push origin enthalpic
 
 ### Upstreaming to EPAM (if applicable)
 
-Open the PR from `FelixKatz77/ketcher_enthalpic:feature/<name>` → `epam/ketcher:master` via the GitHub UI. Because feature branches are scoped and rebased onto upstream, they're already in a PR-ready shape.
+Feature branches are now based on `enthalpic`, so they carry Enthalpic-specific commits that EPAM does not want. To upstream a feature, create a sterile branch off `master` and cherry-pick just the feature's commits onto it:
+
+```bash
+git checkout master
+git checkout -b upstream/<name>
+git cherry-pick <first-feature-commit>^..<last-feature-commit>
+git push -u origin upstream/<name>
+```
+
+Then open the PR from `FelixKatz77/ketcher_enthalpic:upstream/<name>` → `epam/ketcher:master`. Only do this for features that are genuinely upstream-worthy (i.e. not fork-specific UX or business-logic changes).
 
 ### Rules
 

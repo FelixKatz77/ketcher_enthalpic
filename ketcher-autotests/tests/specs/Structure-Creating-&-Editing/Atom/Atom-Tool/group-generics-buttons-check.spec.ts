@@ -17,194 +17,119 @@ test.describe('Generic nodes', () => {
     );
   });
 
-  test('G and G* adding to the atom of structure', async ({ page }) => {
-    /*
-        Test case: EPMLSOPKET-1503
-      */
-    await selectExtendedTableElement(page, ExtendedTableButton.G);
+  test('Acyl groups adding to atoms of structure', async ({ page }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.Bz);
     await getAtomLocator(page, { atomLabel: 'O' }).first().click({
       force: true,
     });
-    await selectExtendedTableElement(page, ExtendedTableButton.GH);
+    await selectExtendedTableElement(page, ExtendedTableButton.Ac);
     await getAtomLocator(page, { atomLabel: 'S' }).first().click({
       force: true,
     });
-    await selectExtendedTableElement(page, ExtendedTableButton.G_STAR);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Aliphatic group adding to atom of structure', async ({ page }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.Cy);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Alkyl groups adding to atoms of structure', async ({ page }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.tBu);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.iPr);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Aromatic groups adding to atoms of structure', async ({ page }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.Ph);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.Bn);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Generic Alk, Ar and R adding to atoms of structure', async ({
+    page,
+  }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.Alk);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.Ar);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.R);
     await getAtomLocator(page, { atomLabel: 'F' }).first().click({
       force: true,
     });
-    await selectExtendedTableElement(page, ExtendedTableButton.GH_STAR);
-    await getAtomLocator(page, { atomLabel: 'I' }).first().click({
+    await takeEditorScreenshot(page);
+  });
+
+  test('Halogene X adding to atom of structure', async ({ page }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.X);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
       force: true,
     });
     await takeEditorScreenshot(page);
   });
 
-  test('Acylic atoms adding to the atom of structure', async ({ page }) => {
-    /*
-        Test case: EPMLSOPKET-1505
-      */
-    await selectExtendedTableElement(page, ExtendedTableButton.ACY);
+  test('Protecting groups adding to atoms of structure', async ({ page }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.Boc);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.Cbz);
     await getAtomLocator(page, { atomLabel: 'S' }).first().click({
       force: true,
     });
-    await selectExtendedTableElement(page, ExtendedTableButton.ACH);
+    await selectExtendedTableElement(page, ExtendedTableButton.Fmoc);
     await getAtomLocator(page, { atomLabel: 'F' }).first().click({
       force: true,
     });
     await takeEditorScreenshot(page);
   });
 
-  test('Acylic Carbo atoms adding to the atom of structure', async ({
-    page,
-  }) => {
-    /*
-        Test case: EPMLSOPKET-1508
-      */
-    await selectExtendedTableElement(page, ExtendedTableButton.ABC);
+  test('Silyl groups adding to atoms of structure', async ({ page }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.TMS);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.TBS);
     await getAtomLocator(page, { atomLabel: 'S' }).first().click({
       force: true,
     });
-    await selectExtendedTableElement(page, ExtendedTableButton.ABH);
+    await selectExtendedTableElement(page, ExtendedTableButton.TIPS);
     await getAtomLocator(page, { atomLabel: 'F' }).first().click({
       force: true,
     });
-    await selectExtendedTableElement(page, ExtendedTableButton.AYH);
-    await getAtomLocator(page, { atomLabel: 'I' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.AYL);
-    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.ALK);
-    await getAtomLocator(page, { atomLabel: 'H' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.ALH);
-    await getAtomLocator(page, { atomLabel: 'P' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.AEL);
-    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.AEH);
-    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
-      force: true,
-    });
     await takeEditorScreenshot(page);
   });
 
-  test('Acylic Hetero atoms adding to the atom of structure', async ({
-    page,
-  }) => {
-    /*
-        Test case: EPMLSOPKET-1512
-      */
-    await selectExtendedTableElement(page, ExtendedTableButton.AHC);
-    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.AHH);
+  test('Sulfonyl groups adding to atoms of structure', async ({ page }) => {
+    await selectExtendedTableElement(page, ExtendedTableButton.Tf);
     await getAtomLocator(page, { atomLabel: 'O' }).first().click({
       force: true,
     });
-    await selectExtendedTableElement(page, ExtendedTableButton.AOX);
-    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.AOH);
-    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
-      force: true,
-    });
-    await takeEditorScreenshot(page);
-  });
-
-  test('Cyclic atoms adding to the atom of structure', async ({ page }) => {
-    /*
-        Test case: EPMLSOPKET-1516
-      */
-    await selectExtendedTableElement(page, ExtendedTableButton.CYC);
+    await selectExtendedTableElement(page, ExtendedTableButton.Ts);
     await getAtomLocator(page, { atomLabel: 'S' }).first().click({
       force: true,
     });
-    await selectExtendedTableElement(page, ExtendedTableButton.CYH);
-    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.CXX);
-    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.CXH);
-    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
-      force: true,
-    });
-    await takeEditorScreenshot(page);
-  });
-
-  test('Cyclic Carbo atoms adding to the atom of structure', async ({
-    page,
-  }) => {
-    /*
-        Test case: EPMLSOPKET-1524
-      */
-    await selectExtendedTableElement(page, ExtendedTableButton.CBC);
-    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.CBH);
-    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.ARY);
-    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.ARH);
-    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.CAL);
-    await getAtomLocator(page, { atomLabel: 'H' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.CAH);
-    await getAtomLocator(page, { atomLabel: 'P' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.CEL);
-    await getAtomLocator(page, { atomLabel: 'I' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.CEH);
-    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
-      force: true,
-    });
-    await takeEditorScreenshot(page);
-  });
-
-  test('Cyclic Hetero atoms adding to the atom of structure', async ({
-    page,
-  }) => {
-    /*
-        Test case: EPMLSOPKET-1526
-      */
-    await selectExtendedTableElement(page, ExtendedTableButton.CHC);
-    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.CHH);
-    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.HAR);
-    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
-      force: true,
-    });
-    await selectExtendedTableElement(page, ExtendedTableButton.HAH);
-    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+    await selectExtendedTableElement(page, ExtendedTableButton.Ms);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
       force: true,
     });
     await takeEditorScreenshot(page);

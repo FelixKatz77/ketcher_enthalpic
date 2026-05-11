@@ -20,7 +20,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -64,8 +63,6 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
-import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 import { LabelEditDialog } from '@tests/pages/molecules/canvas/LabelEditDialog';
 
 test.describe('Atom Properties', () => {
@@ -1686,32 +1683,6 @@ test.describe('Atom Properties', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Add to canvas - Generic Groups', async () => {
-    /*
-      Test case: EPMLSOPKET-1659
-      Description: The Generic Group symbol is present on the canvas.
-    */
-    await selectExtendedTableElement(page, ExtendedTableButton.G);
-    await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).areaSelectionTool();
-    await CommonLeftToolbar(page).eraseButton.click();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Add to canvas - Generic Groups and click on it', async () => {
-    /*
-      Test case: EPMLSOPKET-1659
-      Description: The Generic Group symbol is present in Atom Properties modal.
-    */
-    await selectExtendedTableElement(page, ExtendedTableButton.GH_STAR);
-    await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).areaSelectionTool(
-      SelectionToolType.Rectangle,
-    );
-    await getAtomLocator(page, { atomLabel: 'GH*' }).dblclick();
     await takeEditorScreenshot(page);
   });
 

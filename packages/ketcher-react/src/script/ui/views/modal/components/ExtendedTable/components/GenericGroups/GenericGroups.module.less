@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2023 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@
 .genericGroups {
   overflow-y: auto;
   .scrollbar();
-  
+
   &::-webkit-scrollbar {
     background-color: transparent;
   }
-  
+
   margin-top: 9px;
   padding: 0 12px 12px;
 
@@ -38,16 +38,10 @@
   }
 
   .scrollbar();
+}
 
-  .topGroupsContainer,
-  .groupGenerics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-column-gap: 20px;
-  }
-
-  .subgroupContainer {
-    display: grid;
-    grid-template-columns: 6px 1fr;
-  }
+.groupGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 20px;
 }

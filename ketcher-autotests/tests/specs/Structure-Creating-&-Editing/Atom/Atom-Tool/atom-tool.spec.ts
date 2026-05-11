@@ -200,7 +200,7 @@ test.describe('Atom Tool', () => {
     */
     await RightToolbar(page).extendedTable();
     await ExtendedTableDialog(page).clickExtendedTableElement(
-      ExtendedTableButton.AH,
+      ExtendedTableButton.Alk,
     );
     expect(ExtendedTableDialog(page).addButton).toBeEnabled();
   });

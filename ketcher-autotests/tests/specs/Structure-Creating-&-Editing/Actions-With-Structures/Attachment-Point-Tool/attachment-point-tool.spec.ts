@@ -299,7 +299,7 @@ test.describe('Attachment Point Tool', () => {
       force: true,
     });
 
-    await selectExtendedTableElement(page, ExtendedTableButton.G);
+    await selectExtendedTableElement(page, ExtendedTableButton.Alk);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
       force: true,
     });

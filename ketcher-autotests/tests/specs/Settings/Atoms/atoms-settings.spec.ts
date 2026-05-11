@@ -5,7 +5,6 @@ import {
   waitForPageInit,
   clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
-  clickOnCanvas,
   takeElementScreenshot,
 } from '@utils';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -33,8 +32,6 @@ import {
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
-import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 
 test.describe('Atom Settings', () => {
   test.beforeEach(async ({ page }) => {
@@ -50,20 +47,6 @@ test.describe('Atom Settings', () => {
       AtomsSetting.ShowHydrogenLabels,
       ShowHydrogenLabelsOption.On,
     );
-    await takeEditorScreenshot(page);
-  });
-
-  test('Display Special nodes "Deuterium", "Tritium" when "Show hydrogen labels" = "Terminal and Hetero"', async ({
-    page,
-  }) => {
-    // Test case: EPMLSOPKET-10081
-    // Verify if hydrogen labels appear on 'D' and 'T' -> (DH, TH) when default settings are set
-    const pointX = 250;
-    const pointY = 250;
-    await selectExtendedTableElement(page, ExtendedTableButton.D);
-    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
-    await selectExtendedTableElement(page, ExtendedTableButton.T);
-    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

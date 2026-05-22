@@ -793,7 +793,7 @@ class IndigoService implements StructService {
   ): Promise<ExplicitHydrogensResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
-    const mode = 'auto';
+    const mode = data.mode ?? 'auto';
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {

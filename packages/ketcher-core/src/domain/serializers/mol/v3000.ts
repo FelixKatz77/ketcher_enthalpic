@@ -138,14 +138,61 @@ function parseBondLineV3000(line: string): Bond {
 }
 
 function v3000parseCollection(
-  _ctab: Struct,
+  ctab: Struct,
   ctabLines: string[],
   shift: number,
 ): number {
   /* reader */
-  shift++;
-  while (ctabLines[shift].trim() !== 'M  V30 END COLLECTION') shift++;
-  shift++;
+  // Parses the MDLV30/STE{ABS,REL<n>,RAC<n>} lines and writes the corresponding
+  // stereoLabel onto each referenced atom. ATOMS=(N a1 ... aN) uses 1-based
+  // V3000 ids, which map to internal ids by subtracting 1 — same convention
+  // as parseBondLineV3000 (split[2] - 1).
+  shift++; // consume "BEGIN COLLECTION"
+  while (ctabLines[shift].trim() !== 'M  V30 END COLLECTION') {
+    let line = stripV30(ctabLines[shift++]).trim();
+    while (line.endsWith('-')) {
+      line = (line.slice(0, -1) + stripV30(ctabLines[shift++])).trim();
+    }
+    const keywordMatch = line.match(/^MDLV30\/(STEABS|STEREL|STERAC)(\d*)\b/);
+    if (!keywordMatch) continue;
+    const atomsStart = line.indexOf('ATOMS=');
+    if (atomsStart === -1) continue;
+    // parseBracedNumberList expects a `(...)`-wrapped substring; slice from the
+    // opening paren and pass shift=-1 to convert 1-based ids to 0-based.
+    const parenStart = line.indexOf('(', atomsStart);
+    if (parenStart === -1) continue;
+    let depth = 0;
+    let parenEnd = -1;
+    for (let i = parenStart; i < line.length; i++) {
+      if (line[i] === '(') depth++;
+      else if (line[i] === ')') {
+        depth--;
+        if (depth === 0) {
+          parenEnd = i;
+          break;
+        }
+      }
+    }
+    if (parenEnd === -1) continue;
+    const atomIds = parseBracedNumberList(
+      line.slice(parenStart, parenEnd + 1),
+      -1,
+    );
+    if (!atomIds) continue;
+
+    const type = keywordMatch[1];
+    const groupNum = keywordMatch[2];
+    let stereoLabel: string;
+    if (type === 'STEABS') stereoLabel = 'abs';
+    else if (type === 'STEREL') stereoLabel = `or${groupNum || '1'}`;
+    else stereoLabel = `&${groupNum || '1'}`;
+
+    for (const aid of atomIds) {
+      const atom = ctab.atoms.get(aid);
+      if (atom) atom.stereoLabel = stereoLabel;
+    }
+  }
+  shift++; // consume "END COLLECTION"
   return shift;
 }
 
@@ -287,7 +334,6 @@ function parseCTabV3000(
 
     while (ctabLines[shift].trim() !== 'M  V30 END CTAB') {
       if (ctabLines[shift].trim() === 'M  V30 BEGIN COLLECTION') {
-        // TODO: read collection information
         shift = v3000parseCollection(ctab, ctabLines, shift);
       } else if (ctabLines[shift].trim() === 'M  V30 BEGIN SGROUP') {
         shift = v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift);
@@ -710,6 +756,78 @@ function writeBondLineV3000(
   return parts.join(' ');
 }
 
+// Build the enhanced-stereo COLLECTION lines for the current CTAB.
+// Returns the lines for the full `BEGIN COLLECTION ... END COLLECTION` block,
+// or an empty array when no atom carries a stereoLabel — emitting an empty
+// COLLECTION block is legal but adds noise that some parsers stumble on.
+function writeCollectionV3000(
+  struct: Struct,
+  atomMap: Map<number, number>,
+): string[] {
+  // Group key strings are the V3000 collection keywords as they should appear
+  // on the wire: "STEABS", "STEREL<n>", "STERAC<n>". Group atoms by stereoLabel:
+  //   "abs"   -> STEABS  (absolute)
+  //   "or<n>" -> STEREL<n> (OR / "one of these enantiomers", 1-based)
+  //   "&<n>"  -> STERAC<n> (AND / racemic mixture, 1-based)
+  const absAtoms: number[] = [];
+  const orGroups = new Map<number, number[]>();
+  const andGroups = new Map<number, number[]>();
+
+  struct.atoms.forEach((atom, id) => {
+    const label = atom.stereoLabel;
+    if (!label) return;
+    const v3000Id = atomMap.get(id);
+    if (v3000Id === undefined) return;
+    if (label === 'abs') {
+      absAtoms.push(v3000Id);
+      return;
+    }
+    const orMatch = label.match(/^or(\d+)$/);
+    if (orMatch) {
+      const n = parseInt(orMatch[1], 10);
+      const bucket = orGroups.get(n) ?? [];
+      bucket.push(v3000Id);
+      orGroups.set(n, bucket);
+      return;
+    }
+    const andMatch = label.match(/^&(\d+)$/);
+    if (andMatch) {
+      const n = parseInt(andMatch[1], 10);
+      const bucket = andGroups.get(n) ?? [];
+      bucket.push(v3000Id);
+      andGroups.set(n, bucket);
+    }
+  });
+
+  if (absAtoms.length === 0 && orGroups.size === 0 && andGroups.size === 0) {
+    return [];
+  }
+
+  // ATOMS=(N a1 a2 ... aN) — N is the count, then 1-based indices. Sort ids so
+  // output is stable regardless of struct.atoms iteration order.
+  const formatLine = (keyword: string, ids: number[]): string => {
+    const sorted = [...ids].sort((a, b) => a - b);
+    return `${V3000_PREFIX}MDLV30/${keyword} ATOMS=(${
+      sorted.length
+    } ${sorted.join(' ')})`;
+  };
+
+  const lines: string[] = [`${V3000_PREFIX}BEGIN COLLECTION`];
+  if (absAtoms.length > 0) {
+    lines.push(formatLine('STEABS', absAtoms));
+  }
+  const orKeys = [...orGroups.keys()].sort((a, b) => a - b);
+  for (const n of orKeys) {
+    lines.push(formatLine(`STEREL${n}`, orGroups.get(n)!));
+  }
+  const andKeys = [...andGroups.keys()].sort((a, b) => a - b);
+  for (const n of andKeys) {
+    lines.push(formatLine(`STERAC${n}`, andGroups.get(n)!));
+  }
+  lines.push(`${V3000_PREFIX}END COLLECTION`);
+  return lines;
+}
+
 function writeCTabV3000(struct: Struct): string[] {
   /* saver */
   const lines: string[] = [];
@@ -739,6 +857,8 @@ function writeCTabV3000(struct: Struct): string[] {
     });
     lines.push(`${V3000_PREFIX}END BOND`);
   }
+
+  lines.push(...writeCollectionV3000(struct, atomMap));
 
   lines.push(`${V3000_PREFIX}END CTAB`);
   return lines;

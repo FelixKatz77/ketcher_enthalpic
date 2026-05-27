@@ -1,14 +1,9 @@
 import { FC, useEffect, useState } from 'react';
 import { Item, Submenu, Separator } from 'react-contexify';
-import clsx from 'clsx';
 import Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
-import useBondMarkReaction, {
-  BOND_BROKEN_COLOR,
-  BOND_MADE_COLOR,
-} from '../hooks/useBondMarkReaction';
 import useBondSGroupAttach from '../hooks/useBondSGroupAttach';
 import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
@@ -25,6 +20,12 @@ import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
 
+// "Bond made"/"Bond broken" context-menu items were removed: Kekule now
+// derives bond events by structural diff (see backend/.../bond_diff.py),
+// so curators no longer mark bonds by hand. The bond-level `reactionRole`
+// attribute + green/red rendering remain so the host app can drive
+// highlights programmatically after detection.
+
 type Params = ItemEventParams<BondsContextMenuProps>;
 
 const nonQueryBondNames = getNonQueryBondNames(tools);
@@ -36,11 +37,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     stereo: number;
   } | null>(null);
   const [isBondBetweenMonomers, setIsBondBetweenMonomers] = useState(false);
-  const [isBondMade, setIsBondMade] = useState(false);
-  const [isBondBroken, setIsBondBroken] = useState(false);
   const [handleEdit] = useBondEdit();
-  const handleBondMade = useBondMarkReaction(BOND_MADE_COLOR);
-  const handleBondBroken = useBondMarkReaction(BOND_BROKEN_COLOR);
   const [handleTypeChange, disabled] = useBondTypeChange();
   const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
@@ -72,14 +69,9 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           endAtomSgroup instanceof MonomerMicromolecule &&
           beginAtomSgroup !== endAtomSgroup;
         setIsBondBetweenMonomers(isBetweenMonomers);
-
-        setIsBondMade(bond.reactionRole === 'made');
-        setIsBondBroken(bond.reactionRole === 'broken');
       } else {
         setBondData(null);
         setIsBondBetweenMonomers(false);
-        setIsBondMade(false);
-        setIsBondBroken(false);
       }
     }
   }, [props.propsFromTrigger, ketcherId]);
@@ -121,24 +113,6 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             ? 'Edit selected bonds...'
             : 'Edit...'}
         </span>
-      </Item>
-      <Item
-        {...props}
-        data-testid="Bond made-option"
-        onClick={handleBondMade}
-        disabled={isDisabled}
-        className={clsx({ [styles.selectedItem]: isBondMade })}
-      >
-        <span className={styles.contextMenuText}>Bond made</span>
-      </Item>
-      <Item
-        {...props}
-        data-testid="Bond broken-option"
-        onClick={handleBondBroken}
-        disabled={isDisabled}
-        className={clsx({ [styles.selectedItem]: isBondBroken })}
-      >
-        <span className={styles.contextMenuText}>Bond broken</span>
       </Item>
       <Separator />
       {bondNamesWithoutEmptyValue.map((name) => {

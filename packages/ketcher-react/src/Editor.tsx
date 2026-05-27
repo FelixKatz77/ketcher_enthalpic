@@ -3,7 +3,8 @@ import {
   MicromoleculesEditor as MicromoleculesEditorComponent,
   EditorProps,
 } from './MicromoleculesEditor';
-import { ModeControl } from './script/ui/views/toolbars/ModeControl';
+// Enthalpic: ModeControl import removed — macromolecules mode toggle disabled (see below).
+// import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
 import styles from './Editor.module.less';
 import { Ketcher, Editor as MoleculesEditor, CoreEditor } from 'ketcher-core';
@@ -50,12 +51,16 @@ export const Editor = (props: Props) => {
     window.isPolymerEditorTurnedOn = toggleValue;
   };
 
-  const togglerComponent = !props.disableMacromoleculesEditor ? (
-    <ModeControl
-      toggle={togglePolymerEditor}
-      isPolymerEditor={showPolymerEditor}
-    />
-  ) : undefined;
+  // Enthalpic: macromolecules mode disabled in our app — the Molecules/Macromolecules
+  // toggle is removed from the UI by forcing togglerComponent to undefined.
+  // Original (re-enable by restoring this and the ModeControl import above):
+  // const togglerComponent = !props.disableMacromoleculesEditor ? (
+  //   <ModeControl
+  //     toggle={togglePolymerEditor}
+  //     isPolymerEditor={showPolymerEditor}
+  //   />
+  // ) : undefined;
+  const togglerComponent = undefined;
 
   useEffect(() => {
     const switchToMacromoleculesModeHandler = () => {

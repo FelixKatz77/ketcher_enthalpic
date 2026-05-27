@@ -15,7 +15,9 @@
  ***************************************************************************/
 
 import { RefObject, useRef } from 'react';
-import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
+// Enthalpic: CREATE_MONOMER_TOOL_NAME and IMAGE_KEY imports removed — the
+// "Create a monomer" and "Add image" tools are not used in our app (see below).
+// import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -29,9 +31,11 @@ import {
   bondSpecial,
   bondStereo,
   mappingOptions,
-  rGroupOptions,
+  // Enthalpic: rGroupOptions and shapeOptions no longer used here — the R-Group and
+  // Shapes buttons are removed below (all their tools were removed).
+  // rGroupOptions,
   selectOptions,
-  shapeOptions,
+  // shapeOptions,
 } from './leftToolbarOptions';
 
 import { ArrowScroll } from '../ArrowScroll';
@@ -163,38 +167,50 @@ const LeftToolbar = (props: Props) => {
           />
         </div>
 
-        <Group
-          className={classes.groupItem}
-          items={[
-            {
-              id: 'bonds',
-              options: [
-                ...bondCommon,
-                ...bondQuery,
-                ...bondSpecial,
-                ...bondStereo,
-              ],
-            },
-            { id: 'chain' },
-            { id: 'enhanced-stereo' },
-            { id: 'charge-plus' },
-            { id: 'charge-minus' },
-          ]}
-          height={height}
-          rest={rest}
-        />
+        {/*
+          Enthalpic: sizeRef relocated here (was on the now-removed S-Group/R-Group
+          group). It measures a representative group height to drive the scroll-page
+          step (scrollUp/scrollDown), so it must wrap an always-present group.
+        */}
         <div className={classes.listener} ref={sizeRef}>
           <Group
             className={classes.groupItem}
             items={[
-              { id: 'sgroup' },
-              { id: 'rgroup', options: rGroupOptions },
-              { id: CREATE_MONOMER_TOOL_NAME },
+              {
+                id: 'bonds',
+                options: [
+                  ...bondCommon,
+                  ...bondQuery,
+                  ...bondSpecial,
+                  ...bondStereo,
+                ],
+              },
+              { id: 'chain' },
+              { id: 'enhanced-stereo' },
+              { id: 'charge-plus' },
+              { id: 'charge-minus' },
             ]}
             height={height}
             rest={rest}
           />
         </div>
+        {/*
+          Enthalpic: entire S-Group/R-Group/Create-monomer group removed — none of these
+          tools are used in our app (S-Group, R-Group Label/Fragment/Attachment point,
+          and Create a monomer were all removed).
+          <div className={classes.listener} ref={sizeRef}>
+            <Group
+              className={classes.groupItem}
+              items={[
+                { id: 'sgroup' },
+                { id: 'rgroup', options: rGroupOptions },
+                { id: CREATE_MONOMER_TOOL_NAME },
+              ]}
+              height={height}
+              rest={rest}
+            />
+          </div>
+        */}
 
         <Group
           className={classes.groupItem}
@@ -213,11 +229,17 @@ const LeftToolbar = (props: Props) => {
         <div ref={endRef}>
           <Group
             className={classes.groupItem}
-            items={[
-              { id: 'shapes', options: shapeOptions },
-              { id: 'text' },
-              { id: IMAGE_KEY },
-            ]}
+            items={
+              [
+                // Enthalpic: Shapes tool removed — not used in our app (all shape
+                // variants were removed). The Group renders nothing when empty.
+                // { id: 'shapes', options: shapeOptions },
+                // Enthalpic: "Add text" tool removed — not used in our app.
+                // { id: 'text' },
+                // Enthalpic: "Add image" tool removed — not used in our app.
+                // { id: IMAGE_KEY },
+              ]
+            }
             height={height}
             rest={rest}
           />

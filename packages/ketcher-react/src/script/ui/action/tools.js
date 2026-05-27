@@ -16,11 +16,16 @@
 
 import {
   RxnArrowMode,
-  SimpleObjectMode,
+  // Enthalpic: SimpleObjectMode import removed — all Shape tools (ellipse/rectangle/line)
+  // are not used in our app and their action definitions below are commented out.
+  // SimpleObjectMode,
   findStereoAtoms,
-  IMAGE_KEY,
-  MULTITAIL_ARROW_TOOL_NAME,
-  CREATE_MONOMER_TOOL_NAME,
+  // Enthalpic: IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME and CREATE_MONOMER_TOOL_NAME
+  // imports removed — the Add Image, Multi-tailed arrow and Create-a-monomer tools
+  // are not used in our app and their action definitions below are commented out.
+  // IMAGE_KEY,
+  // MULTITAIL_ARROW_TOOL_NAME,
+  // CREATE_MONOMER_TOOL_NAME,
 } from 'ketcher-core';
 
 import { bond as bondSchema } from '../data/schema/struct-schema';
@@ -116,29 +121,35 @@ const toolActions = {
     disabled: isFlipDisabled,
     hidden: (options) => isHidden(options, 'transform-flip-v'),
   },
-  sgroup: {
-    shortcut: 'Mod+g',
-    title: 'S-Group',
-    action: { tool: 'sgroup' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'sgroup'),
-  },
+  // Enthalpic: S-Group tool removed — not used in our app (button + Mod+G shortcut).
+  // sgroup: {
+  //   shortcut: 'Mod+g',
+  //   title: 'S-Group',
+  //   action: { tool: 'sgroup' },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'sgroup'),
+  // },
   arrows: {
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'arrows'),
   },
+  // Enthalpic: only the three filled-triangle arrow variants are kept; all other
+  // arrow tools below are removed (commented out) to simplify the UI.
+  /*
   'reaction-arrow-open-angle': {
     title: 'Arrow Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.OpenAngle },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-open-angle'),
   },
+  */
   'reaction-arrow-filled-triangle': {
     title: 'Arrow Filled Triangle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledTriangle },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-filled-triangle'),
   },
+  /* Enthalpic: arrow variants removed — not used in our app.
   'reaction-arrow-filled-bow': {
     title: 'Arrow Filled Bow Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledBow },
@@ -163,6 +174,7 @@ const toolActions = {
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-retrosynthetic'),
   },
+  */
   'reaction-arrow-both-ends-filled-triangle': {
     title: 'Arrow Both Ends Filled Triangle Tool',
     action: {
@@ -173,6 +185,7 @@ const toolActions = {
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-both-ends-filled-triangle'),
   },
+  /* Enthalpic: arrow variant removed — not used in our app.
   'reaction-arrow-equilibrium-filled-half-bow': {
     title: 'Arrow Equilibrium Filled Half Bow Tool',
     action: {
@@ -183,6 +196,7 @@ const toolActions = {
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-equilibrium-filled-half-bow'),
   },
+  */
   'reaction-arrow-equilibrium-filled-triangle': {
     title: 'Arrow Equilibrium Filled Triangle Tool',
     action: {
@@ -193,6 +207,7 @@ const toolActions = {
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-equilibrium-filled-triangle'),
   },
+  /* Enthalpic: remaining arrow variants removed — not used in our app.
   'reaction-arrow-equilibrium-open-angle': {
     title: 'Arrow Equilibrium Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.EquilibriumOpenAngle },
@@ -301,6 +316,7 @@ const toolActions = {
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, MULTITAIL_ARROW_TOOL_NAME),
   },
+  */
   'reaction-plus': {
     title: 'Reaction Plus Tool',
     action: { tool: 'reactionplus' },
@@ -323,80 +339,87 @@ const toolActions = {
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-unmap'),
   },
-  rgroup: {
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'rgroup'),
-  },
-  'rgroup-label': {
-    shortcut: 'Mod+r',
-    title: 'R-Group Label Tool',
-    action: { tool: 'rgroupatom' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'rgroup-label'),
-  },
-  'rgroup-fragment': {
-    shortcut: ['Mod+Shift+r', 'Mod+r'],
-    title: 'R-Group Fragment Tool',
-    action: { tool: 'rgroupfragment' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'rgroup-fragment'),
-  },
-  'rgroup-attpoints': {
-    shortcut: 'Mod+r',
-    title: 'Attachment Point Tool',
-    action: { tool: 'apoint' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'rgroup-attpoints'),
-  },
-  [CREATE_MONOMER_TOOL_NAME]: {
-    shortcut: 'Mod+m',
-    title: 'Create a monomer',
-    action: {
-      tool: CREATE_MONOMER_TOOL_NAME,
-    },
-    disabled: (editor) =>
-      editor.isMonomerCreationWizardActive ||
-      !editor.isMonomerCreationWizardEnabled,
-    hidden: (options) => isHidden(options, CREATE_MONOMER_TOOL_NAME),
-  },
-  shapes: {
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'shapes'),
-  },
-  'shape-ellipse': {
-    title: 'Shape Ellipse',
-    action: { tool: 'simpleobject', opts: SimpleObjectMode.ellipse },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'shape-ellipse'),
-  },
-  'shape-rectangle': {
-    title: 'Shape Rectangle',
-    action: { tool: 'simpleobject', opts: SimpleObjectMode.rectangle },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'shape-rectangle'),
-  },
-  'shape-line': {
-    title: 'Shape Line',
-    action: { tool: 'simpleobject', opts: SimpleObjectMode.line },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'shape-line'),
-  },
-  text: {
-    shortcut: 'Alt+t',
-    title: 'Add text',
-    action: { tool: 'text' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'text'),
-  },
+  // Enthalpic: all R-Group tools removed — not used in our app (parent button +
+  // Label/Fragment/Attachment-point tools and their Mod+R / Mod+Shift+R shortcuts).
+  // rgroup: {
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'rgroup'),
+  // },
+  // 'rgroup-label': {
+  //   shortcut: 'Mod+r',
+  //   title: 'R-Group Label Tool',
+  //   action: { tool: 'rgroupatom' },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'rgroup-label'),
+  // },
+  // 'rgroup-fragment': {
+  //   shortcut: ['Mod+Shift+r', 'Mod+r'],
+  //   title: 'R-Group Fragment Tool',
+  //   action: { tool: 'rgroupfragment' },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'rgroup-fragment'),
+  // },
+  // 'rgroup-attpoints': {
+  //   shortcut: 'Mod+r',
+  //   title: 'Attachment Point Tool',
+  //   action: { tool: 'apoint' },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'rgroup-attpoints'),
+  // },
+  // Enthalpic: "Create a monomer" tool removed — not used in our app (button + Mod+M shortcut).
+  // [CREATE_MONOMER_TOOL_NAME]: {
+  //   shortcut: 'Mod+m',
+  //   title: 'Create a monomer',
+  //   action: {
+  //     tool: CREATE_MONOMER_TOOL_NAME,
+  //   },
+  //   disabled: (editor) =>
+  //     editor.isMonomerCreationWizardActive ||
+  //     !editor.isMonomerCreationWizardEnabled,
+  //   hidden: (options) => isHidden(options, CREATE_MONOMER_TOOL_NAME),
+  // },
+  // Enthalpic: all Shape tools removed — not used in our app (parent button +
+  // Ellipse/Rectangle/Line).
+  // shapes: {
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'shapes'),
+  // },
+  // 'shape-ellipse': {
+  //   title: 'Shape Ellipse',
+  //   action: { tool: 'simpleobject', opts: SimpleObjectMode.ellipse },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'shape-ellipse'),
+  // },
+  // 'shape-rectangle': {
+  //   title: 'Shape Rectangle',
+  //   action: { tool: 'simpleobject', opts: SimpleObjectMode.rectangle },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'shape-rectangle'),
+  // },
+  // 'shape-line': {
+  //   title: 'Shape Line',
+  //   action: { tool: 'simpleobject', opts: SimpleObjectMode.line },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'shape-line'),
+  // },
+  // Enthalpic: "Add text" tool removed — not used in our app (button + Alt+T shortcut).
+  // text: {
+  //   shortcut: 'Alt+t',
+  //   title: 'Add text',
+  //   action: { tool: 'text' },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'text'),
+  // },
   bonds: {
     hidden: (options) => isHidden(options, 'bonds'),
   },
-  [IMAGE_KEY]: {
-    title: 'Add Image',
-    action: { tool: IMAGE_KEY },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, IMAGE_KEY),
-  },
+  // Enthalpic: "Add Image" tool removed — not used in our app.
+  // [IMAGE_KEY]: {
+  //   title: 'Add Image',
+  //   action: { tool: IMAGE_KEY },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, IMAGE_KEY),
+  // },
 };
 
 const bondCuts = {

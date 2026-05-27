@@ -34,7 +34,16 @@ function GenericGroups({
   return (
     <div className={classes.genericGroups}>
       <div className={classes.groupGrid}>
-        {Object.entries(Generics).map(([key, group]) => (
+        {/*
+          Enthalpic: the "Generics" section (Alk / Ar / R catch-all placeholders) and
+          the "Halogene" section (X) are hidden from the Extended table — not used in
+          our app. We filter them out at render time and intentionally leave the core
+          `Generics` data untouched, so atom-label parsing/validation (genericsList)
+          still recognizes these labels.
+        */}
+        {Object.entries(Generics)
+          .filter(([key]) => key !== 'generics' && key !== 'halogene')
+          .map(([key, group]) => (
           <GenGroup
             key={key}
             group={group}

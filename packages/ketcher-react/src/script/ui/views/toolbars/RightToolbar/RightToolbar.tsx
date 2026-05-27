@@ -121,7 +121,8 @@ const RightToolbar = (props: Props) => {
         <div ref={endRef}>
           <Group className={classes.groupItem}>
             <div ref={sizeRef}>
-              <ToolbarGroupItem id="any-atom" {...rest} />
+              {/* Enthalpic: "Any atom" tool removed — not used in our app. */}
+              {/* <ToolbarGroupItem id="any-atom" {...rest} /> */}
               <div className={classes.button}>
                 <ToolbarGroupItem id="extended-table" {...rest} />
               </div>

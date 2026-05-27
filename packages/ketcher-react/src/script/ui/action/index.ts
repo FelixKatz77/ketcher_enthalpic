@@ -270,19 +270,20 @@ const config: Record<string, UiAction> = {
     },
     hidden: (options) => isHidden(options, 'select-descriptors'),
   },
-  'any-atom': {
-    title: 'Any atom',
-    action: {
-      tool: 'atom',
-      opts: {
-        label: 'A',
-        pseudo: 'A',
-        type: 'gen',
-      },
-    },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'any-atom'),
-  },
+  // Enthalpic: "Any atom" tool removed — not used in our app.
+  // 'any-atom': {
+  //   title: 'Any atom',
+  //   action: {
+  //     tool: 'atom',
+  //     opts: {
+  //       label: 'A',
+  //       pseudo: 'A',
+  //       type: 'gen',
+  //     },
+  //   },
+  //   disabled: (editor) => editor.isMonomerCreationWizardActive,
+  //   hidden: (options) => isHidden(options, 'any-atom'),
+  // },
   'info-modal': {
     title: 'Error message',
     action: { dialog: 'info-modal' },

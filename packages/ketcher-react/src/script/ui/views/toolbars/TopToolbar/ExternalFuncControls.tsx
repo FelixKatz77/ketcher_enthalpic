@@ -38,8 +38,12 @@ export const ExternalFuncControls = ({
   isCollapsed,
   onLayout,
   onClean,
-  onAromatize,
-  onDearomatize,
+  // Enthalpic: onAromatize / onDearomatize destructures removed — the Aromatize and
+  // Dearomatize buttons are commented out below, so the handlers are no longer used.
+  // The props themselves stay on ExternalFuncProps to keep the caller's prop-passing
+  // unchanged.
+  // onAromatize,
+  // onDearomatize,
   onCalculate,
   onCheck,
   onAnalyse,
@@ -51,18 +55,20 @@ export const ExternalFuncControls = ({
   shortcuts,
 }: ExternalFuncProps) => {
   const externalFuncButtons = [
-    {
-      name: 'arom',
-      title: 'Aromatize',
-      handler: onAromatize,
-      testId: 'Aromatize button',
-    },
-    {
-      name: 'dearom',
-      title: 'Dearomatize',
-      handler: onDearomatize,
-      testId: 'Dearomatize button',
-    },
+    // Enthalpic: Aromatize and Dearomatize buttons removed — not used in our app
+    // (also disables their Alt+A / Ctrl+Alt+A shortcuts via action/server.ts).
+    // {
+    //   name: 'arom',
+    //   title: 'Aromatize',
+    //   handler: onAromatize,
+    //   testId: 'Aromatize button',
+    // },
+    // {
+    //   name: 'dearom',
+    //   title: 'Dearomatize',
+    //   handler: onDearomatize,
+    //   testId: 'Dearomatize button',
+    // },
     {
       name: 'layout',
       title: 'Layout',

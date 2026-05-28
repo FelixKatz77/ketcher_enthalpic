@@ -41,24 +41,26 @@ const config: ServerConfig = {
     disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'clean'),
   },
-  arom: {
-    shortcut: 'Alt+a',
-    title: 'Aromatize',
-    action: {
-      thunk: serverTransform('aromatize'),
-    },
-    disabled: (_editor, _server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'arom'),
-  },
-  dearom: {
-    shortcut: 'Ctrl+Alt+a',
-    title: 'Dearomatize',
-    action: {
-      thunk: serverTransform('dearomatize'),
-    },
-    disabled: (_editor, _server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'dearom'),
-  },
+  // Enthalpic: Aromatize and Dearomatize actions removed — not used in our app
+  // (also removes the Alt+A and Ctrl+Alt+A keyboard shortcuts).
+  // arom: {
+  //   shortcut: 'Alt+a',
+  //   title: 'Aromatize',
+  //   action: {
+  //     thunk: serverTransform('aromatize'),
+  //   },
+  //   disabled: (_editor, _server, options) => !options.app.server,
+  //   hidden: (options) => isHidden(options, 'arom'),
+  // },
+  // dearom: {
+  //   shortcut: 'Ctrl+Alt+a',
+  //   title: 'Dearomatize',
+  //   action: {
+  //     thunk: serverTransform('dearomatize'),
+  //   },
+  //   disabled: (_editor, _server, options) => !options.app.server,
+  //   hidden: (options) => isHidden(options, 'dearom'),
+  // },
   cip: {
     shortcut: 'Mod+p',
     title: 'Calculate CIP',

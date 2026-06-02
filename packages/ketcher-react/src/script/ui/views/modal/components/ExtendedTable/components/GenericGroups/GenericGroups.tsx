@@ -44,15 +44,15 @@ function GenericGroups({
         {Object.entries(Generics)
           .filter(([key]) => key !== 'generics' && key !== 'halogene')
           .map(([key, group]) => (
-          <GenGroup
-            key={key}
-            group={group}
-            selected={selected}
-            onAtomSelect={onAtomSelect}
-            onAtomActivate={onAtomActivate}
-            disabledQueryElements={disabledQueryElements}
-          />
-        ))}
+            <GenGroup
+              key={key}
+              group={group}
+              selected={selected}
+              onAtomSelect={onAtomSelect}
+              onAtomActivate={onAtomActivate}
+              disabledQueryElements={disabledQueryElements}
+            />
+          ))}
       </div>
     </div>
   );
